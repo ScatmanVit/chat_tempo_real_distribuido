@@ -16,10 +16,15 @@ import { createAuthMiddleware } from './middleware/auth.js';
 import { createMessageService } from './services/message.js';
 import { handleDisconnect } from './handlers/index.js';
 import { createSendMessageHandler, createSendSeenMessageHandler } from './handlers/index.js';
+import { createHealthHandler } from './handlers/health.js';
 import { logger } from './shared/logger.js';
 
 
-const httpServer = createServer();
+const healthHandler = createHealthHandler();
+
+const httpServer = createServer((req, res) => {
+  healthHandler(req, res);
+});
 const io = new Server(httpServer, {
    adapter: createAdapter(pubClient, subClient),
    cors: {
